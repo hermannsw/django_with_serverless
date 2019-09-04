@@ -7,6 +7,10 @@ verify_ssl = true
 
 [packages]
 django = "*"
+django-environ = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"
