@@ -7,7 +7,6 @@ verify_ssl = true
 
 [packages]
 django = "*"
-django-environ = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
