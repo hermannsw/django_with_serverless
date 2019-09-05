@@ -83,8 +83,11 @@ WSGI_APPLICATION = 'django_with_serverless.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': env('MONGO_DB_NAME'),
+        'HOST': env('MONGO_DB_HOST'),
+        'USER': env('MONGO_DB_USER'),
+        'PASSWORD': env('MONGO_DB_PASS'),
     }
 }
 
