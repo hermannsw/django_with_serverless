@@ -4,7 +4,7 @@ from django.core.management import execute_from_command_line
 
 
 def django(event, context):
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mydjangoproject.settings")
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_with_serverless.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError:
@@ -20,6 +20,4 @@ def django(event, context):
                 "forget to activate a virtual environment?"
             )
         raise
-
-
-execute_from_command_line(['manage.py', 'runserver'])
+    execute_from_command_line(['manage.py', 'runserver'])
