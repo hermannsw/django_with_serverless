@@ -20,6 +20,14 @@ provider:
   stage: ${opt:stage, self:custom.defaultStage}
   region: ap-northeast-1
 
+  # Optional VPC. But if you use VPC then both subproperties (securityGroupIds and subnetIds) are required
+  vpc:
+    securityGroupIds:
+      - ${self:custom.envfile.environment.${self:provider.stage}.SECURITY_GROUP_ID}
+    subnetIds:
+      - ${self:custom.envfile.environment.${self:provider.stage}.SUBNET_ID1}
+      - ${self:custom.envfile.environment.${self:provider.stage}.SUBNET_ID2}
+
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
 #    - Effect: "Allow"
@@ -35,10 +43,6 @@ provider:
 #          - - "arn:aws:s3:::"
 #            - "Ref" : "ServerlessDeploymentBucket"
 #            - "/*"
-
-  # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
 
 # you can add packaging information here
 #package:
