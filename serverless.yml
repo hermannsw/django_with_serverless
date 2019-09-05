@@ -1,16 +1,3 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: django-with-serverless
 app: django-with-serverless
 org: hermannsw
@@ -19,12 +6,18 @@ org: hermannsw
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
+custom:
+  defaultStage: dev
+  envfile:
+    environment:
+      dev: ${file(./env/dev.yml)}
+
 provider:
   name: aws
   runtime: python3.7
 
-# you can overwrite defaults here
-  stage: dev
+  # deploy時に--stageを指定しなかった場合、defaultStageとしてdevが指定される。
+  stage: ${opt:stage, self:custom.defaultStage}
   region: ap-northeast-1
 
 # you can add statements to the Lambda function's IAM Role here
@@ -43,7 +36,7 @@ provider:
 #            - "Ref" : "ServerlessDeploymentBucket"
 #            - "/*"
 
-# you can define service wide environment variables here
+  # you can define service wide environment variables here
 #  environment:
 #    variable1: value1
 
@@ -62,6 +55,13 @@ functions:
     events:
       - http: ANY /
       - http: ANY {proxy+}
+    # provider.stageで指定されている環境用のymlを読み込む。
+    environment:
+      MONGO_DB_HOST: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_HOST}
+      MONGO_DB_NAME: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_NAME}
+      MONGO_DB_USER: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_USER}
+      MONGO_DB_PASS: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_PASS}
+
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
