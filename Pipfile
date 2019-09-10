@@ -12,6 +12,7 @@ markdown = "*"
 django-filter = "*"
 django-cors-headers = "*"
 djongo = "*"
+werkzeug = "*"
 
 [requires]
 python_version = "3.7"
