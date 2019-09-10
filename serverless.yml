@@ -11,6 +11,8 @@ custom:
   envfile:
     environment:
       dev: ${file(./env/dev.yml)}
+  wsgi:
+    app: django_with_serverless.wsgi.application
 
 provider:
   name: aws
@@ -54,8 +56,8 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  django:
-    handler: handler.django
+  api:
+    handler: wsgi_handler.handler
     events:
       - http: ANY /
       - http: ANY {proxy+}
