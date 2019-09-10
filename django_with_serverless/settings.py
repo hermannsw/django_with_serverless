@@ -11,15 +11,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
-env = environ.Env()
-env_file = str(BASE_DIR + '/.env')
-env.read_env(env_file)
 
 
 # Quick-start development settings - unsuitable for production
@@ -84,10 +78,10 @@ WSGI_APPLICATION = 'django_with_serverless.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': env('MONGO_DB_NAME'),
-        'HOST': env('MONGO_DB_HOST'),
-        'USER': env('MONGO_DB_USER'),
-        'PASSWORD': env('MONGO_DB_PASS'),
+        'NAME': os.environ['MONGO_DB_NAME'],
+        'HOST': os.environ['MONGO_DB_HOST'],
+        'USER': os.environ['MONGO_DB_USER'],
+        'PASSWORD': os.environ['MONGO_DB_PASS'],
     }
 }
 
