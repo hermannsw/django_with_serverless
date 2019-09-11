@@ -4,7 +4,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-werkzeug = "*"
 
 [packages]
 django = "*"
@@ -15,6 +14,7 @@ django-cors-headers = "*"
 djongo = "*"
 boto3 = "*"
 django-storages = "*"
+werkzeug = "*"
 
 [requires]
 python_version = "3.7"
