@@ -8,9 +8,6 @@
   },
   "author": "hermannsw",
   "license": "ISC",
-  "dependencies": {
-    "serverless": "^1.51.0"
-  },
   "devDependencies": {
     "serverless-python-requirements": "^5.0.0",
     "serverless-wsgi": "^1.7.3"
