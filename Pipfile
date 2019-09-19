@@ -7,15 +7,11 @@ verify_ssl = true
 
 [packages]
 django = "*"
-djangorestframework = "*"
-markdown = "*"
-django-filter = "*"
-django-cors-headers = "*"
 djongo = "*"
 boto3 = "*"
 django-storages = "*"
 werkzeug = "*"
-django-environ = "*"
+djangorestframework = "*"
 
 [requires]
 python_version = "3.7"

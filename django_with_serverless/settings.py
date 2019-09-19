@@ -16,11 +16,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-if os.environ.get('MONGO_DB_HOST') is None:
-    import environ
-    env = environ.Env()
-    env_file = str(BASE_DIR + '/.env')
-    env.read_env(env_file)
+# if os.environ.get('MONGO_DB_HOST') is None:
+#     import environ
+#     env = environ.Env()
+#     env_file = str(BASE_DIR + '/.env')
+#     env.read_env(env_file)
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,9 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'django_with_serverless',
     'storages',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -83,26 +82,30 @@ WSGI_APPLICATION = 'django_with_serverless.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-if os.environ.get('MONGO_DB_HOST') is None:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'djongo',
-            'NAME': env('MONGO_DB_NAME'),
-            'HOST': env('MONGO_DB_HOST'),
-            'USER': env('MONGO_DB_USER'),
-            'PASSWORD': env('MONGO_DB_PASS'),
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'djongo',
-            'NAME': os.environ['MONGO_DB_NAME'],
-            'HOST': os.environ['MONGO_DB_HOST'],
-            'USER': os.environ['MONGO_DB_USER'],
-            'PASSWORD': os.environ['MONGO_DB_PASS'],
-        }
-    }
+# if os.environ.get('MONGO_DB_HOST') is None:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'djongo',
+#             'NAME': env('MONGO_DB_NAME'),
+#             'HOST': env('MONGO_DB_HOST'),
+#             'USER': env('MONGO_DB_USER'),
+#             'PASSWORD': env('MONGO_DB_PASS'),
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'djongo',
+#             'NAME': os.environ['MONGO_DB_NAME'],
+#             'HOST': os.environ['MONGO_DB_HOST'],
+#             'USER': os.environ['MONGO_DB_USER'],
+#             'PASSWORD': os.environ['MONGO_DB_PASS'],
+#         }
+#     }
+
+DATABASES = {
+    'default': {}
+}
 
 
 # Password validation
@@ -139,16 +142,17 @@ USE_TZ = True
 
 
 # AWS Settings
-if os.environ.get('AWS_ACCESS_KEY_ID') is None:
-    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-else:
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# if os.environ.get('AWS_ACCESS_KEY_ID') is None:
+#     AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+#     AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+#     AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+# else:
+#     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+#     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+#     AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+#
+# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_CUSTOM_DOMAIN = 'django-with-serverless-local.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
@@ -158,13 +162,11 @@ AWS_S3_OBJECT_PARAMETERS = {
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 AWS_LOCATION = 'static'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
