@@ -20,4 +20,6 @@ def django(event, context):
                 "forget to activate a virtual environment?"
             )
         raise
-    execute_from_command_line(['manage.py', 'runserver'])
+
+
+execute_from_command_line(['manage.py', 'runserver'])
