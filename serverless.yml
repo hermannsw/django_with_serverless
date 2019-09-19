@@ -7,22 +7,19 @@ org: hermannsw
 # frameworkVersion: "=X.X.X"
 
 custom:
-  defaultStage: local
   envfile:
     environment:
       local: ${file(./env/local.yml)}
       dev: ${file(./env/dev.yml)}
   wsgi:
     app: django_with_serverless.wsgi.application
-  pythonRequirements:
-    zip: true
 
 provider:
   name: aws
   runtime: python3.7
 
   # deploy時に--stageを指定しなかった場合、defaultStageとしてdevが指定される。
-  stage: ${opt:stage, self:custom.defaultStage}
+  stage: ${opt:stage, 'local'}
   region: ap-northeast-1
 
   # Optional VPC. But if you use VPC then both subproperties (securityGroupIds and subnetIds) are required
@@ -58,6 +55,10 @@ provider:
 #    - exclude-me.py
 #    - exclude-me-dir/**
 
+plugins:
+  - serverless-wsgi
+  - serverless-python-requirements
+
 functions:
   api:
     handler: wsgi_handler.handler
@@ -65,14 +66,14 @@ functions:
       - http: ANY /
       - http: ANY {proxy+}
     # provider.stageで指定されている環境用のymlを読み込む。
-    environment:
-      MONGO_DB_HOST: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_HOST}
-      MONGO_DB_NAME: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_NAME}
-      MONGO_DB_USER: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_USER}
-      MONGO_DB_PASS: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_PASS}
-      AWS_ACCESS_KEY_ID: ${self:custom.envfile.environment.${self:provider.stage}.AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${self:custom.envfile.environment.${self:provider.stage}.AWS_SECRET_ACCESS_KEY}
-      AWS_STORAGE_BUCKET_NAME: ${self:custom.envfile.environment.${self:provider.stage}.AWS_STORAGE_BUCKET_NAME}
+#    environment:
+#      MONGO_DB_HOST: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_HOST}
+#      MONGO_DB_NAME: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_NAME}
+#      MONGO_DB_USER: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_USER}
+#      MONGO_DB_PASS: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_PASS}
+#      AWS_ACCESS_KEY_ID: ${self:custom.envfile.environment.${self:provider.stage}.AWS_ACCESS_KEY_ID}
+#      AWS_SECRET_ACCESS_KEY: ${self:custom.envfile.environment.${self:provider.stage}.AWS_SECRET_ACCESS_KEY}
+#      AWS_STORAGE_BUCKET_NAME: ${self:custom.envfile.environment.${self:provider.stage}.AWS_STORAGE_BUCKET_NAME}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -125,7 +126,3 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
-
-plugins:
-  - serverless-wsgi
-  - serverless-python-requirements
