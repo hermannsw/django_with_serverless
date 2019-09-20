@@ -31,6 +31,14 @@ provider:
       - ${self:custom.envfile.environment.${self:provider.stage}.SUBNET_ID2}
 
 # you can add statements to the Lambda function's IAM Role here
+iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - "ec2:CreateNetworkInterface"
+      - "ec2:DescribeNetworkInterfaces"
+      - "ec2:DeleteNetworkInterface"
+    Resource:
+      - "*"
 #  iamRoleStatements:
 #    - Effect: "Allow"
 #      Action:
@@ -66,11 +74,11 @@ functions:
       - http: ANY /
       - http: ANY {proxy+}
     # provider.stageで指定されている環境用のymlを読み込む。
-#    environment:
-#      MONGO_DB_HOST: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_HOST}
-#      MONGO_DB_NAME: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_NAME}
-#      MONGO_DB_USER: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_USER}
-#      MONGO_DB_PASS: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_PASS}
+    environment:
+      MONGO_DB_HOST: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_HOST}
+      MONGO_DB_NAME: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_NAME}
+      MONGO_DB_USER: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_USER}
+      MONGO_DB_PASS: ${self:custom.envfile.environment.${self:provider.stage}.MONGO_DB_PASS}
 #      AWS_ACCESS_KEY_ID: ${self:custom.envfile.environment.${self:provider.stage}.AWS_ACCESS_KEY_ID}
 #      AWS_SECRET_ACCESS_KEY: ${self:custom.envfile.environment.${self:provider.stage}.AWS_SECRET_ACCESS_KEY}
 #      AWS_STORAGE_BUCKET_NAME: ${self:custom.envfile.environment.${self:provider.stage}.AWS_STORAGE_BUCKET_NAME}
