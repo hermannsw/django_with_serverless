@@ -10,17 +10,43 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import base64
+import json
 import os
+
+import boto3
+from botocore.exceptions import ClientError
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# if os.environ.get('MONGO_DB_HOST') is None:
-#     import environ
-#     env = environ.Env()
-#     env_file = str(BASE_DIR + '/.env')
-#     env.read_env(env_file)
+secret_name = os.environ['AWS_SECRET_NAME']
+region_name = os.environ['AWS_REGION_NAME']
+
+session = boto3.session.Session()
+client = session.client(
+    service_name='secretsmanager',
+    region_name=region_name
+)
+
+try:
+    # TODO: fix below timed out
+    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+except ClientError as e:
+    if e.response['Error'].get('Code'):
+        raise e
+    else:
+        if 'SecretString' in get_secret_value_response:
+            secret = get_secret_value_response['SecretString']
+        else:
+            decoded_binary_secret = base64.b64decode(get_secret_value_response['SecretBinary'])
+
+secret_dict = json.loads(get_secret_value_response['SecretString'])
+mongo_db_name = 'django_with_serverless'
+mongo_db_host = secret_dict['host']
+mongo_db_user = secret_dict['username']
+mongo_db_pass = secret_dict['password']
 
 
 # Quick-start development settings - unsuitable for production
@@ -82,31 +108,15 @@ WSGI_APPLICATION = 'django_with_serverless.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# if os.environ.get('MONGO_DB_HOST') is None:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'djongo',
-#             'NAME': env('MONGO_DB_NAME'),
-#             'HOST': env('MONGO_DB_HOST'),
-#             'USER': env('MONGO_DB_USER'),
-#             'PASSWORD': env('MONGO_DB_PASS'),
-#         }
-#     }
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'djongo',
-#             'NAME': os.environ['MONGO_DB_NAME'],
-#             'HOST': os.environ['MONGO_DB_HOST'],
-#             'USER': os.environ['MONGO_DB_USER'],
-#             'PASSWORD': os.environ['MONGO_DB_PASS'],
-#         }
-#     }
-
 DATABASES = {
-    'default': {}
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': mongo_db_name,
+        'HOST': mongo_db_host,
+        'USER': mongo_db_user,
+        'PASSWORD': mongo_db_pass,
+    }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -141,18 +151,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-# AWS Settings
-# if os.environ.get('AWS_ACCESS_KEY_ID') is None:
-#     AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-#     AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-#     AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-# else:
-#     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-#     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-#     AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-#
-# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_S3_CUSTOM_DOMAIN = 'django-with-serverless-local.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % os.environ['AWS_STORAGE_BUCKET_NAME']
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
